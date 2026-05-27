@@ -11,40 +11,30 @@ import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Vista principal del visualizador de Árbol Rojo-Negro.
- * Dibuja el árbol en un panel con scroll y expone controles
- * para insertar, eliminar y buscar nodos.
- */
 public class VistaPrincipal extends JFrame {
 
-    // ── Colores de la UI ────────────────────────────────────────────────────
-    private static final Color COLOR_FONDO        = new Color(30, 30, 40);
-    private static final Color COLOR_PANEL_CTRL   = new Color(40, 40, 55);
-    private static final Color COLOR_NODO_ROJO    = new Color(210, 50,  50);
-    private static final Color COLOR_NODO_NEGRO   = new Color(30,  30,  30);
-    private static final Color COLOR_NODO_RESALT  = new Color(255, 200,  0);
-    private static final Color COLOR_BORDE_NODO   = new Color(220, 220, 220);
-    private static final Color COLOR_ARISTA       = new Color(180, 180, 180);
-    private static final Color COLOR_TEXTO_NODO   = Color.WHITE;
-    private static final Color COLOR_TEXTO_UI     = new Color(220, 220, 230);
-    private static final Color COLOR_BTN_INS      = new Color(60, 140,  60);
-    private static final Color COLOR_BTN_ELI      = new Color(160, 50,  50);
-    private static final Color COLOR_BTN_BUS      = new Color(50, 100, 180);
+    private static final Color COLOR_FONDO       = new Color(30, 30, 40);
+    private static final Color COLOR_PANEL_CTRL  = new Color(40, 40, 55);
+    private static final Color COLOR_NODO_ROJO   = new Color(210, 50, 50);
+    private static final Color COLOR_NODO_NEGRO  = new Color(30, 30, 30);
+    private static final Color COLOR_NODO_RESALT = new Color(255, 200, 0);
+    private static final Color COLOR_BORDE_NODO  = new Color(220, 220, 220);
+    private static final Color COLOR_ARISTA      = new Color(180, 180, 180);
+    private static final Color COLOR_TEXTO_NODO  = Color.WHITE;
+    private static final Color COLOR_TEXTO_UI    = new Color(220, 220, 230);
+    private static final Color COLOR_BTN_INS     = new Color(60, 140, 60);
+    private static final Color COLOR_BTN_ELI     = new Color(160, 50, 50);
+    private static final Color COLOR_BTN_BUS     = new Color(50, 100, 180);
 
-    private static final int RADIO_NODO  = 22;
-    private static final int SEP_V       = 70;   // separación vertical entre niveles
+    private static final int RADIO_NODO = 22;
+    private static final int SEP_V      = 70;
 
-    // ── Componentes ─────────────────────────────────────────────────────────
     private final ControlVista controlVista;
     private final PanelArbol   panelArbol;
     private final JTextField   campoEntrada;
     private final JLabel       lblMensaje;
 
-    // Nodo actualmente resaltado (búsqueda)
     private Nodo nodoResaltado = null;
-
-    // ────────────────────────────────────────────────────────────────────────
 
     public VistaPrincipal(ControlVista cv) {
         this.controlVista = cv;
@@ -57,7 +47,6 @@ public class VistaPrincipal extends JFrame {
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(COLOR_FONDO);
 
-        // ── Panel de árbol (centro, con scroll) ─────────────────────────────
         panelArbol = new PanelArbol();
         JScrollPane scroll = new JScrollPane(panelArbol);
         scroll.setBorder(null);
@@ -66,12 +55,10 @@ public class VistaPrincipal extends JFrame {
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scroll, BorderLayout.CENTER);
 
-        // ── Panel de controles (sur) ─────────────────────────────────────────
         JPanel panelCtrl = new JPanel(new BorderLayout(10, 6));
         panelCtrl.setBackground(COLOR_PANEL_CTRL);
         panelCtrl.setBorder(new EmptyBorder(12, 18, 12, 18));
 
-        // Fila de entrada + botones
         JPanel filaEntrada = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         filaEntrada.setOpaque(false);
 
@@ -100,7 +87,6 @@ public class VistaPrincipal extends JFrame {
         filaEntrada.add(btnBuscar);
         filaEntrada.add(btnLimpiar);
 
-        // Etiqueta de mensajes
         lblMensaje = new JLabel(" ", SwingConstants.CENTER);
         lblMensaje.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         lblMensaje.setForeground(new Color(180, 220, 180));
@@ -109,16 +95,13 @@ public class VistaPrincipal extends JFrame {
         panelCtrl.add(lblMensaje,  BorderLayout.SOUTH);
         add(panelCtrl, BorderLayout.SOUTH);
 
-        // ── Leyenda (norte) ──────────────────────────────────────────────────
         add(crearLeyenda(), BorderLayout.NORTH);
 
-        // ── Listeners ────────────────────────────────────────────────────────
         btnInsertar.addActionListener(e -> accionInsertar());
         btnEliminar.addActionListener(e -> accionEliminar());
         btnBuscar  .addActionListener(e -> accionBuscar());
         btnLimpiar .addActionListener(e -> accionLimpiar());
 
-        // Enter en el campo dispara inserción
         campoEntrada.addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) accionInsertar();
@@ -127,8 +110,6 @@ public class VistaPrincipal extends JFrame {
 
         setVisible(true);
     }
-
-    // ── Acciones ─────────────────────────────────────────────────────────────
 
     private void accionInsertar() {
         nodoResaltado = null;
@@ -164,8 +145,6 @@ public class VistaPrincipal extends JFrame {
         lblMensaje.setText(msg);
     }
 
-    // ── Helpers de UI ────────────────────────────────────────────────────────
-
     private JButton crearBoton(String texto, Color fondo) {
         JButton btn = new JButton(texto);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -177,12 +156,8 @@ public class VistaPrincipal extends JFrame {
         btn.setBorder(new EmptyBorder(7, 16, 7, 16));
         btn.addMouseListener(new MouseAdapter() {
             final Color original = fondo;
-            @Override public void mouseEntered(MouseEvent e) {
-                btn.setBackground(original.brighter());
-            }
-            @Override public void mouseExited(MouseEvent e) {
-                btn.setBackground(original);
-            }
+            @Override public void mouseEntered(MouseEvent e) { btn.setBackground(original.brighter()); }
+            @Override public void mouseExited(MouseEvent e)  { btn.setBackground(original); }
         });
         return btn;
     }
@@ -222,10 +197,6 @@ public class VistaPrincipal extends JFrame {
         return item;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Panel de dibujo del árbol
-    // ════════════════════════════════════════════════════════════════════════
-
     private class PanelArbol extends JPanel {
 
         PanelArbol() {
@@ -247,32 +218,25 @@ public class VistaPrincipal extends JFrame {
                 g2.setFont(new Font("Segoe UI", Font.ITALIC, 16));
                 String msg = "El árbol está vacío. Inserta un valor para comenzar.";
                 FontMetrics fm = g2.getFontMetrics();
-                g2.drawString(msg,
-                        (getWidth()  - fm.stringWidth(msg)) / 2,
-                        getHeight() / 2);
+                g2.drawString(msg, (getWidth() - fm.stringWidth(msg)) / 2, getHeight() / 2);
                 return;
             }
 
-            // Calcular posiciones x,y de cada nodo
             Map<Nodo, int[]> posiciones = new HashMap<>();
             int[] xCounter = {0};
             calcularPosiciones(raiz, NIL, 0, xCounter, posiciones);
 
-            // Escalar para centrar horizontalmente
-            int maxX = posiciones.values().stream().mapToInt(p -> p[0]).max().orElse(0);
+            int maxX       = posiciones.values().stream().mapToInt(p -> p[0]).max().orElse(0);
             int totalAncho = (maxX + 1) * (RADIO_NODO * 2 + 20);
-            int offsetX = Math.max(20, (getWidth() - totalAncho) / 2);
-            int offsetY = RADIO_NODO + 20;
+            int offsetX    = Math.max(20, (getWidth() - totalAncho) / 2);
+            int offsetY    = RADIO_NODO + 20;
 
-            // Ajustar tamaño preferido para el scroll
             int totalAlto = (alturaArbol(raiz, NIL) + 1) * SEP_V + RADIO_NODO * 2 + 40;
             setPreferredSize(new Dimension(Math.max(getWidth(), totalAncho + 40), totalAlto));
             revalidate();
 
-            // Dibujar aristas primero (quedan detrás de los nodos)
             dibujarAristas(g2, raiz, NIL, posiciones, offsetX, offsetY);
 
-            // Dibujar nodos
             for (Map.Entry<Nodo, int[]> entry : posiciones.entrySet()) {
                 Nodo n  = entry.getKey();
                 int  px = offsetX + entry.getValue()[0] * (RADIO_NODO * 2 + 20);
@@ -281,26 +245,21 @@ public class VistaPrincipal extends JFrame {
             }
         }
 
-        /**
-         * Asigna posiciones (columna, fila) a cada nodo mediante recorrido in-order.
-         */
         private void calcularPosiciones(Nodo n, Nodo NIL, int nivel,
-                                         int[] xCounter, Map<Nodo, int[]> pos) {
+                                        int[] xCounter, Map<Nodo, int[]> pos) {
             if (n == NIL) return;
             calcularPosiciones(n.izq, NIL, nivel + 1, xCounter, pos);
             pos.put(n, new int[]{xCounter[0]++, nivel});
             calcularPosiciones(n.der, NIL, nivel + 1, xCounter, pos);
         }
 
-        /** Altura del árbol (número de niveles). */
         private int alturaArbol(Nodo n, Nodo NIL) {
             if (n == NIL) return -1;
             return 1 + Math.max(alturaArbol(n.izq, NIL), alturaArbol(n.der, NIL));
         }
 
-        /** Dibuja las aristas (líneas) entre padre e hijos. */
         private void dibujarAristas(Graphics2D g2, Nodo n, Nodo NIL,
-                                     Map<Nodo, int[]> pos, int ox, int oy) {
+                                    Map<Nodo, int[]> pos, int ox, int oy) {
             if (n == NIL) return;
 
             int[] pPos = pos.get(n);
@@ -326,16 +285,13 @@ public class VistaPrincipal extends JFrame {
             }
         }
 
-        /** Dibuja un nodo individual (círculo + texto + color). */
         private void dibujarNodo(Graphics2D g2, Nodo n, int cx, int cy) {
             boolean resaltado = (n == nodoResaltado);
 
-            // Sombra suave
             g2.setColor(new Color(0, 0, 0, 80));
             g2.fill(new Ellipse2D.Double(cx - RADIO_NODO + 3, cy - RADIO_NODO + 3,
                     RADIO_NODO * 2, RADIO_NODO * 2));
 
-            // Relleno del nodo
             Color relleno = resaltado
                     ? COLOR_NODO_RESALT
                     : (n.color == Nodo.ROJO ? COLOR_NODO_ROJO : COLOR_NODO_NEGRO);
@@ -343,20 +299,16 @@ public class VistaPrincipal extends JFrame {
             g2.fill(new Ellipse2D.Double(cx - RADIO_NODO, cy - RADIO_NODO,
                     RADIO_NODO * 2, RADIO_NODO * 2));
 
-            // Borde
             g2.setColor(resaltado ? Color.ORANGE : COLOR_BORDE_NODO);
             g2.setStroke(new BasicStroke(resaltado ? 2.5f : 1.5f));
             g2.draw(new Ellipse2D.Double(cx - RADIO_NODO, cy - RADIO_NODO,
                     RADIO_NODO * 2, RADIO_NODO * 2));
 
-            // Texto del valor
             g2.setColor(resaltado ? Color.BLACK : COLOR_TEXTO_NODO);
             g2.setFont(new Font("Segoe UI", Font.BOLD, 13));
             FontMetrics fm = g2.getFontMetrics();
             String txt = String.valueOf(n.dato);
-            g2.drawString(txt,
-                    cx - fm.stringWidth(txt) / 2,
-                    cy + fm.getAscent() / 2 - 1);
+            g2.drawString(txt, cx - fm.stringWidth(txt) / 2, cy + fm.getAscent() / 2 - 1);
         }
     }
 }
